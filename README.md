@@ -1,40 +1,45 @@
-﻿# DDSN: Dual-Domain Spiking Network for Low-Light Image Enhancement
+# A Dual-Domain Synergistic Network with Frequency-Guided Neuromorphic Adaptation for Low-Light Fundus Image Enhancement
 
 [![Python](https://img.shields.io/badge/Python-3.8%2B-blue.svg)](#environment)
 [![PyTorch](https://img.shields.io/badge/PyTorch-2.0.1-ee4c2c.svg)](#environment)
 [![Status](https://img.shields.io/badge/Status-Research%20Code-brightgreen.svg)](#overview)
 
-> Official PyTorch implementation of **DDSN**, a dual-domain low-light image enhancement framework that combines frequency-guided priors, spiking-inspired adaptive thresholding, and segmentation-aware supervision.
+> Official PyTorch implementation of **DDSN**, a lightweight dual-domain synergistic network for low-light fundus image enhancement.
 
 ## Overview
 
-Low-light image enhancement requires both faithful illumination restoration and reliable structure preservation. DDSN addresses this challenge with a dual-domain design that couples:
+Low-light fundus image enhancement aims to improve the visibility of anatomical structures and pathological regions degraded by suboptimal clinical imaging conditions. DDSN addresses this challenge with a dual-domain design that couples:
 
 - **frequency-domain priors** for illumination and structure disentanglement,
-- **spiking-inspired adaptive threshold modulation** for dynamic feature filtering,
-- **deformable spatial modeling** for context-aware enhancement, and
-- **segmentation-aware auxiliary supervision** for preserving task-relevant structures.
+- **neuromorphic adaptive threshold modulation** for region-aware feature activation,
+- **phase-guided deformable attention** for structure preservation, and
+- **a hybrid degradation strategy** for bridging the clinical domain gap.
 
-In the current implementation, amplitude-related priors are used to guide adaptive threshold modulation, while phase-related priors are used to preserve geometric and structural information.
+In the proposed framework, the amplitude spectrum models spatially varying illumination conditions, while the phase spectrum preserves illumination-invariant structural cues. These priors are injected into spiking-style feature adaptation to address spatially non-uniform degradation in fundus images.
 
 ## Highlights
 
-- Dual-domain enhancement architecture with spatial-frequency interaction
-- Frequency prior modeling through amplitude and phase decomposition in deep features
-- Spiking-inspired attention with illumination-adaptive ternary thresholding
-- Optional segmentation-aware training for structure preservation
-- Energy analysis utility for sparsity-aware efficiency estimation
+- Lightweight **Dual-Domain Synergistic Network (DDSN)** for low-light fundus image enhancement
+- **Frequency-Guided Neuromorphic Adaptation Module (FGNAM)** for joint frequency-spatial modeling
+- **Frequency-based Illumination Modulation Block (FIMB)** for illumination-aware modulation
+- **Spiking Deformable Sliding Window Attention (SDSWA)** for phase-guided structure preservation
+- **Hybrid degradation strategy** for more realistic low-light fundus training data
+- Lightweight architecture with only **2.72M parameters** and favorable energy-efficiency trade-off
 
-## Method
+## Framework
 
-The main model is implemented in [DDSN.py](/D:/BaiduNetdiskDownload/DDSN/DDSN.py).
+<p align="center">
+  <img src="./assets/DDSN1.png" alt="DDSN framework" width="100%">
+</p>
+
+The main model is implemented in `DDSN.py`. The overall architecture follows the paper's **Dual-Domain Synergistic Network (DDSN)** with stacked **Frequency-Guided Neuromorphic Adaptation Modules (FGNAMs)** in a hierarchical U-shaped backbone.
 
 Key components include:
 
-- `FreMLP`: extracts amplitude-enhanced illumination priors and phase-based structure priors
-- `SpikingMSDeformableAttention`: injects frequency guidance into deformable attention
-- `BipolarNeuron`: performs adaptive threshold modulation based on amplitude priors
-- `SpikingEnhancementBlock`: fuses frequency and spatial enhancement streams
+- `FIMB`: decomposes features into amplitude and phase components for disentangled illumination-structure modeling
+- `LDRM`: aggregates multi-scale contextual information before neuromorphic adaptation
+- `SDSWA`: performs frequency-guided spiking deformable attention for region-adaptive enhancement
+- `BipolarNeuron`: performs illumination-adaptive ternary threshold modulation
 - `VMUNet` / `net`: reconstructs the final enhanced image with residual learning
 
 The final enhanced result is produced by residual reconstruction:
@@ -43,36 +48,37 @@ The final enhanced result is produced by residual reconstruction:
 final = out_unet + inputs
 ```
 
-## Visualization
+## Module Visualization
 
-You can use this section to place an architecture teaser or qualitative comparisons.
+<p align="center">
+  <img src="./assets/MDST.png" alt="DDSN module visualization" width="100%">
+</p>
 
-```markdown
-![DDSN teaser](./assets/teaser.png)
-```
-
-Suggested visual materials for this repository:
-- overall architecture figure
-- qualitative enhancement comparisons
-- amplitude/phase prior visualization
-- threshold modulation heatmaps
-- downstream segmentation preservation examples
-
-If you do not yet have figures ready, keeping this section in place still helps structure the project page for later updates.
+This figure illustrates the internal design of FGNAM, including the Frequency-based Illumination Modulation Block (FIMB), Lightweight Dilated Residual Module (LDRM), and Spiking Deformable Sliding Window Attention (SDSWA).
 
 ## Results
 
-A suggested quantitative table format is shown below. Replace the placeholder values with your final paper or benchmark numbers.
+<p align="center">
+  <img src="./assets/Figure1.png" alt="DDSN efficiency-performance comparison" width="72%">
+</p>
 
-| Dataset | PSNR | SSIM | LPIPS | Notes |
-| --- | ---: | ---: | ---: | --- |
-| LOL-v1 | TBA | TBA | TBA | Main benchmark |
-| LOL-v2 | TBA | TBA | TBA | Optional |
-| VE-LOL / custom | TBA | TBA | TBA | Optional |
+Figure 1 in the paper shows the performance-efficiency trade-off of DDSN. The proposed method achieves a favorable balance between structural fidelity and energy consumption, outperforming prior low-light fundus enhancement methods under resource-constrained settings.
 
-You may also add a short qualitative summary here, for example:
+## Qualitative Comparisons
 
-> DDSN improves illumination restoration while preserving fine structures under challenging low-light conditions.
+<p align="center">
+  <img src="./assets/Vision.png" alt="Qualitative enhancement comparisons" width="100%">
+</p>
+
+This figure presents visual comparisons on representative fundus datasets, showing that DDSN produces more balanced illumination restoration, improved vessel visibility, and fewer color distortions than competing methods.
+
+## Downstream Vision Analysis
+
+<p align="center">
+  <img src="./assets/Segmentation.png" alt="Downstream segmentation comparisons" width="100%">
+</p>
+
+This figure demonstrates that the images enhanced by DDSN are more favorable for downstream vision tasks, including retinal vessel segmentation and optic disc/cup segmentation.
 
 ## Repository Structure
 
@@ -82,6 +88,7 @@ DDSN/
 ├─ train.py                # training script
 ├─ test.py                 # folder-based inference script
 ├─ requirements.txt        # Python dependencies
+├─ assets/                 # figures used in the GitHub README
 ├─ datasets/               # optional local dataset folder
 ├─ lib/                    # dataloaders, transforms, utilities, SSIM
 ├─ utils/                  # logging, losses, metrics, optimization helpers
@@ -112,7 +119,7 @@ pip install torch torchvision torchaudio timm einops pillow opencv-python scikit
 
 ## Dataset Preparation
 
-The training pipeline expects paired low-light images, normal-light references, and optional segmentation masks.
+The training pipeline expects paired low-light fundus images, normal-light references, and optional segmentation masks.
 
 Expected directory structure:
 
@@ -129,7 +136,7 @@ datasets/
 
 Folder description:
 - `low/`: low-light input images
-- `high/`: corresponding normal-light ground truth images
+- `high/`: corresponding normal-light fundus ground truth images
 - `seg/`: segmentation masks used during training
 
 Important notes:
@@ -171,7 +178,7 @@ Training artifacts are saved to:
 
 ## Inference
 
-The provided [test.py](/D:/BaiduNetdiskDownload/DDSN/test.py) performs folder-based inference and saves enhanced images.
+The provided `test.py` performs folder-based inference and saves enhanced images.
 
 Before running inference, update the hard-coded paths in `test.py`:
 - `self.weights_path`
@@ -193,7 +200,7 @@ The current inference script imports the model as:
 from Best_module.BEE1 import net
 ```
 
-If the public release of this repository is centered on [DDSN.py](/D:/BaiduNetdiskDownload/DDSN/DDSN.py), it is recommended to change that line to:
+If the public release of this repository is centered on `DDSN.py`, it is recommended to change that line to:
 
 ```python
 from DDSN import net
@@ -210,11 +217,11 @@ This codebase optionally uses an auxiliary segmentation model during training:
 - the enhanced output is passed through the segmentation branch
 - IoU and Dice based losses are used as structural supervision
 
-This auxiliary objective is intended to encourage the enhanced images to remain semantically and structurally faithful.
+This auxiliary objective is intended to encourage the enhanced fundus images to remain anatomically and structurally faithful.
 
 ## Energy Analysis
 
-[DDSN.py](/D:/BaiduNetdiskDownload/DDSN/DDSN.py) includes an `EnergyMeter` utility for approximate sparsity and energy analysis.
+`DDSN.py` includes an `EnergyMeter` utility for approximate sparsity and energy analysis.
 
 Run:
 
@@ -231,21 +238,21 @@ This routine will:
 ## Todo
 
 - Release cleaned training and inference scripts without hard-coded paths
-- Add architecture and qualitative result figures
-- Provide pretrained checkpoints and download links
-- Add benchmark tables for LOL-v1 / LOL-v2 or other target datasets
+- Add pretrained checkpoints and download links
+- Add benchmark tables from the paper and released checkpoints
 - Refactor inference into a command-line interface
 - Add threshold-visualization and amplitude-phase exchange analysis scripts
+- Add more qualitative comparison panels for public release
 
 ## Citation
 
 If you find this repository useful, please cite your paper when available.
 
 ```bibtex
-@article{ddsn2026,
-  title   = {DDSN: Dual-Domain Spiking Network for Low-Light Image Enhancement},
-  author  = {Author, First and Author, Second and Author, Third},
-  journal = {arXiv / Conference / Journal},
+@article{cao2026ddsn,
+  title   = {A Dual-Domain Synergistic Network with Frequency-Guided Neuromorphic Adaptation for Low-Light Fundus Image Enhancement},
+  author  = {Cao, Lvchen and Wang, Yafei and Wang, Shunzhou and Li, Wei and Li, Wenjiao and Xu, Qingxia and Li, Huiqi and Lei, Pengcheng},
+  journal = {Under Review},
   year    = {2026}
 }
 ```
